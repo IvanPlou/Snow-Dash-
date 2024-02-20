@@ -1,0 +1,57 @@
+On Player Script:
+
+public int coinCount;
+bool wasCollected = false;
+
+void OnTriggerEnter2D(Collider2D other)
+{        
+    if(other.tag == "JumpBoost")
+    {
+        myRigidbody.velocity += new Vector2 (myRigidbody.velocity.x, jumpBoost);
+    }
+
+    if(other.tag == "RunBoost")
+    {
+        isRunBoost = true;            
+    }
+
+    if(other.tag == "Coin" && !wasCollected)
+    {
+        coinCount += 1; 
+        wasCollected = true;           
+    } 
+
+void OnTriggerExit2D(Collider2D coin) 
+    {
+       if (coin.tag == "Coin" && wasCollected == true)
+       {
+        wasCollected = false;
+       }
+    }
+
+Coins script:
+
+[SerializeField] AudioClip pickupSFX;
+bool wasCollected = false;   
+
+
+[SerializeField] TextMeshProUGUI coinCountText;
+[SerializeField] string coinsInArea = "Total coins in the Area";
+PlayerMovement player; 
+
+void OnTriggerEnter2D(Collider2D other)
+{
+   if (other.tag == "Player" && !wasCollected)
+   {
+       wasCollected = true;
+       AudioSource.PlayClipAtPoint(pickupSFX, Camera.main.transform.position);
+       gameObject.SetActive(false);
+       Destroy(gameObject);           
+   }
+}
+
+Update()
+{
+	coinCountText.text = "Coins: " + player.coinCount.ToString() + " / " + coinsInArea;
+}
+
